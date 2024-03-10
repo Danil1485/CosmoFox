@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useEffect, useState} from 'react';
+import './App.scss';
+import {Link} from "react-router-dom";
+import {getReport} from "./api/Api";
+import {reportCard} from "./models";
+import {Header} from "./components/Header";
+
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+    const [data, setData] = useState<Array<reportCard>>()
+
+    const handleData = (data: any) => {
+        setData(data)
+    }
+
+    useEffect(() => {
+        getReport(handleData)
+    }, [])
+
+    const showData = data?.map((data: reportCard) => {
+        return (
+            <div className={'card'} key={data.id}>
+                <Link className={'name'} to={`/report/${data.id}`}>{data.title}</Link>
+                <p>{data.price}</p>
+            </div>
+        );
+    })
+
+    return (
+        <div className={"App"}>
+            <Header/>
+            <div className={'reportbox'}>
+                <h1>История отчетов</h1>
+                <div>
+                    {showData}
+                </div>
+            </div>
+        </div>
+
+    );
 }
 
 export default App;
